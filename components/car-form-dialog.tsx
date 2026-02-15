@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useState, useEffect } from 'react'
+import { useLanguage } from '@/lib/i18n/language-context'
 
 interface CarData {
   id: string
@@ -43,6 +44,7 @@ interface CarFormDialogProps {
 export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { t } = useLanguage()
 
   const [brand, setBrand] = useState('')
   const [model, setModel] = useState('')
@@ -112,12 +114,12 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Error al guardar')
+        throw new Error(data.error || t.carForm.saveError)
       }
 
       onSuccess()
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
+      setError(err instanceof Error ? err.message : t.carForm.saveError)
     } finally {
       setIsLoading(false)
     }
@@ -128,14 +130,14 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
       <DialogContent className="max-h-[90svh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-card-foreground font-serif">
-            {car ? 'Editar Auto' : 'Agregar Auto'}
+            {car ? t.carForm.editCar : t.carForm.addCar}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
-              <Label htmlFor="brand" className="text-card-foreground">Marca</Label>
+              <Label htmlFor="brand" className="text-card-foreground">{t.carForm.brand}</Label>
               <Input
                 id="brand"
                 required
@@ -146,7 +148,7 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
               />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="model" className="text-card-foreground">Modelo</Label>
+              <Label htmlFor="model" className="text-card-foreground">{t.carForm.model}</Label>
               <Input
                 id="model"
                 required
@@ -160,7 +162,7 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
 
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
-              <Label htmlFor="year" className="text-card-foreground">Ano</Label>
+              <Label htmlFor="year" className="text-card-foreground">{t.carForm.year}</Label>
               <Input
                 id="year"
                 type="number"
@@ -171,7 +173,7 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
               />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="price" className="text-card-foreground">Precio/Dia (USD)</Label>
+              <Label htmlFor="price" className="text-card-foreground">{t.carForm.pricePerDay}</Label>
               <Input
                 id="price"
                 type="number"
@@ -187,7 +189,7 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
 
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
-              <Label htmlFor="hp" className="text-card-foreground">Caballos de Fuerza</Label>
+              <Label htmlFor="hp" className="text-card-foreground">{t.carForm.horsepowerLabel}</Label>
               <Input
                 id="hp"
                 type="number"
@@ -198,7 +200,7 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
               />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="seats" className="text-card-foreground">Asientos</Label>
+              <Label htmlFor="seats" className="text-card-foreground">{t.carForm.seatsLabel}</Label>
               <Input
                 id="seats"
                 type="number"
@@ -212,34 +214,34 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
 
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
-              <Label className="text-card-foreground">Transmision</Label>
+              <Label className="text-card-foreground">{t.carForm.transmissionLabel}</Label>
               <Select value={transmission} onValueChange={setTransmission}>
                 <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Automatic">Automatica</SelectItem>
-                  <SelectItem value="Manual">Manual</SelectItem>
+                  <SelectItem value="Automatic">{t.carForm.automatic}</SelectItem>
+                  <SelectItem value="Manual">{t.carForm.manual}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
-              <Label className="text-card-foreground">Combustible</Label>
+              <Label className="text-card-foreground">{t.carForm.fuelLabel}</Label>
               <Select value={fuelType} onValueChange={setFuelType}>
                 <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Gasoline">Gasolina</SelectItem>
-                  <SelectItem value="Electric">Electrico</SelectItem>
-                  <SelectItem value="Hybrid">Hibrido</SelectItem>
+                  <SelectItem value="Gasoline">{t.carForm.gasoline}</SelectItem>
+                  <SelectItem value="Electric">{t.carForm.electric}</SelectItem>
+                  <SelectItem value="Hybrid">{t.carForm.hybrid}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="image" className="text-card-foreground">URL de Imagen</Label>
+            <Label htmlFor="image" className="text-card-foreground">{t.carForm.imageUrl}</Label>
             <Input
               id="image"
               type="url"
@@ -251,10 +253,10 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="description" className="text-card-foreground">Descripcion</Label>
+            <Label htmlFor="description" className="text-card-foreground">{t.carForm.descriptionLabel}</Label>
             <Textarea
               id="description"
-              placeholder="Describe tu auto..."
+              placeholder={t.carForm.descriptionPlaceholder}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="bg-background border-border text-foreground min-h-20"
@@ -265,10 +267,10 @@ export function CarFormDialog({ open, onOpenChange, car, onSuccess }: CarFormDia
 
           <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading
-              ? 'Guardando...'
+              ? t.carForm.savingText
               : car
-                ? 'Actualizar Auto'
-                : 'Agregar Auto'}
+                ? t.carForm.updateCar
+                : t.carForm.addCarButton}
           </Button>
         </form>
       </DialogContent>

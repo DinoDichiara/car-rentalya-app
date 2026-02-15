@@ -7,10 +7,13 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { useLanguage } from '@/lib/i18n/language-context'
+import { LanguageToggle } from '@/components/language-toggle'
 
 export function ClientHeader() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const router = useRouter()
+  const { t } = useLanguage()
 
   useEffect(() => {
     const supabase = createClient()
@@ -34,6 +37,7 @@ export function ClientHeader() {
         </Link>
 
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           {user ? (
             <>
               <span className="text-xs text-muted-foreground hidden sm:block">
@@ -43,18 +47,18 @@ export function ClientHeader() {
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/admin">
                     <User className="h-4 w-4" />
-                    <span className="sr-only sm:not-sr-only sm:ml-1">Admin</span>
+                    <span className="sr-only sm:not-sr-only sm:ml-1">{t.common.admin}</span>
                   </Link>
                 </Button>
               )}
               <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
-                <span className="sr-only">Cerrar sesion</span>
+                <span className="sr-only">{t.common.logoutSrOnly}</span>
               </Button>
             </>
           ) : (
             <Button variant="outline" size="sm" asChild>
-              <Link href="/auth/login">Ingresar</Link>
+              <Link href="/auth/login">{t.common.login}</Link>
             </Button>
           )}
         </div>

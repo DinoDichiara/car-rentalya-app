@@ -1,6 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { Fuel, Gauge, Users } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n/language-context'
 
 interface CarCardProps {
   car: {
@@ -25,6 +28,7 @@ const defaultImages: Record<string, string> = {
 }
 
 export function CarCard({ car }: CarCardProps) {
+  const { t } = useLanguage()
   const imageUrl = car.image_url || defaultImages[car.brand] || '/images/hero-car.jpg'
 
   return (
@@ -49,7 +53,7 @@ export function CarCard({ car }: CarCardProps) {
               </h3>
             </div>
             <span className="rounded-lg bg-primary/90 px-2.5 py-1 text-sm font-bold text-primary-foreground">
-              ${car.price_per_day.toLocaleString()}/dia
+              ${car.price_per_day.toLocaleString()}{t.common.perDay}
             </span>
           </div>
         </div>
@@ -61,7 +65,7 @@ export function CarCard({ car }: CarCardProps) {
           </div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
-            <span>{car.seats} asientos</span>
+            <span>{car.seats} {t.common.seats}</span>
           </div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Fuel className="h-3.5 w-3.5" />

@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Calendar } from '@/components/ui/calendar'
 import {
   ArrowLeft,
@@ -17,10 +16,10 @@ import {
 import useSWR from 'swr'
 import { useState } from 'react'
 import {
-  isWithinInterval,
   parseISO,
   eachDayOfInterval,
 } from 'date-fns'
+import { useLanguage } from '@/lib/i18n/language-context'
 
 const defaultImages: Record<string, string> = {
   Lamborghini: '/images/lamborghini-huracan.jpg',
@@ -59,6 +58,7 @@ export function CarDetail({ carId }: { carId: string }) {
     fetcher
   )
   const [month, setMonth] = useState(new Date())
+  const { t } = useLanguage()
 
   // Calculate booked dates
   const bookedDates =
@@ -95,10 +95,10 @@ export function CarDetail({ carId }: { carId: string }) {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
         <p className="text-lg font-medium text-muted-foreground">
-          Auto no encontrado
+          {t.carDetail.carNotFound}
         </p>
         <Button asChild variant="outline" className="mt-4">
-          <Link href="/cars">Volver al catalogo</Link>
+          <Link href="/cars">{t.carDetail.backToCatalog}</Link>
         </Button>
       </div>
     )
@@ -114,7 +114,7 @@ export function CarDetail({ carId }: { carId: string }) {
         className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Volver al catalogo
+        {t.carDetail.backToCatalog}
       </Link>
 
       {/* Hero image */}
@@ -142,7 +142,7 @@ export function CarDetail({ carId }: { carId: string }) {
           <span className="text-3xl font-bold text-primary">
             ${car.price_per_day.toLocaleString()}
           </span>
-          <span className="text-sm text-muted-foreground">/ dia</span>
+          <span className="text-sm text-muted-foreground">{t.carDetail.perDay}</span>
         </div>
       </div>
 
@@ -151,7 +151,7 @@ export function CarDetail({ carId }: { carId: string }) {
         <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
           <Gauge className="h-5 w-5 text-primary" />
           <div>
-            <p className="text-xs text-muted-foreground">Potencia</p>
+            <p className="text-xs text-muted-foreground">{t.carDetail.horsepower}</p>
             <p className="text-sm font-medium text-card-foreground">
               {car.horsepower ? `${car.horsepower} HP` : 'N/A'}
             </p>
@@ -160,21 +160,21 @@ export function CarDetail({ carId }: { carId: string }) {
         <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
           <Users className="h-5 w-5 text-primary" />
           <div>
-            <p className="text-xs text-muted-foreground">Asientos</p>
+            <p className="text-xs text-muted-foreground">{t.carDetail.seatsLabel}</p>
             <p className="text-sm font-medium text-card-foreground">{car.seats}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
           <Settings2 className="h-5 w-5 text-primary" />
           <div>
-            <p className="text-xs text-muted-foreground">Transmision</p>
+            <p className="text-xs text-muted-foreground">{t.carDetail.transmission}</p>
             <p className="text-sm font-medium text-card-foreground">{car.transmission}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
           <Fuel className="h-5 w-5 text-primary" />
           <div>
-            <p className="text-xs text-muted-foreground">Combustible</p>
+            <p className="text-xs text-muted-foreground">{t.carDetail.fuel}</p>
             <p className="text-sm font-medium text-card-foreground">{car.fuel_type}</p>
           </div>
         </div>
@@ -183,7 +183,7 @@ export function CarDetail({ carId }: { carId: string }) {
       {/* Description */}
       {car.description && (
         <div className="mb-6">
-          <h2 className="mb-2 text-lg font-semibold text-foreground">Descripcion</h2>
+          <h2 className="mb-2 text-lg font-semibold text-foreground">{t.carDetail.description}</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             {car.description}
           </p>
@@ -194,17 +194,17 @@ export function CarDetail({ carId }: { carId: string }) {
       <div className="mb-6">
         <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-foreground">
           <CalendarDays className="h-5 w-5 text-primary" />
-          Disponibilidad
+          {t.carDetail.availability}
         </h2>
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center gap-4 mb-3">
             <div className="flex items-center gap-1.5">
               <div className="h-3 w-3 rounded-full bg-primary/20 border border-primary/40" />
-              <span className="text-xs text-muted-foreground">Disponible</span>
+              <span className="text-xs text-muted-foreground">{t.common.available}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="h-3 w-3 rounded-full bg-destructive/60" />
-              <span className="text-xs text-muted-foreground">Rentado</span>
+              <span className="text-xs text-muted-foreground">{t.common.rented}</span>
             </div>
           </div>
           <Calendar
@@ -226,7 +226,7 @@ export function CarDetail({ carId }: { carId: string }) {
       {/* Contact Owner */}
       <div className="mb-6 rounded-xl border border-primary/20 bg-primary/5 p-4">
         <h2 className="mb-1 text-lg font-semibold text-foreground">
-          Contactar al Propietario
+          {t.carDetail.contactOwner}
         </h2>
         {car.profiles && (
           <p className="mb-3 text-sm text-muted-foreground">
@@ -237,12 +237,12 @@ export function CarDetail({ carId }: { carId: string }) {
           <Button asChild className="w-full">
             <a href={`tel:+${phoneNumber}`}>
               <Phone className="h-4 w-4 mr-2" />
-              Llamar al Propietario
+              {t.carDetail.callOwner}
             </a>
           </Button>
         ) : (
           <p className="text-sm text-muted-foreground">
-            No hay telefono disponible. Contacta por otro medio.
+            {t.carDetail.noPhone}
           </p>
         )}
       </div>

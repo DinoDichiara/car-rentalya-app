@@ -12,6 +12,7 @@ import {
 import { Search } from 'lucide-react'
 import useSWR from 'swr'
 import { useState } from 'react'
+import { useLanguage } from '@/lib/i18n/language-context'
 
 interface Car {
   id: string
@@ -35,6 +36,7 @@ export function CarCatalog() {
   const { data: cars, isLoading } = useSWR<Car[]>('/api/cars', fetcher)
   const [search, setSearch] = useState('')
   const [brandFilter, setBrandFilter] = useState('all')
+  const { t } = useLanguage()
 
   const brands = cars
     ? Array.from(new Set(cars.map((c) => c.brand))).sort()
@@ -53,7 +55,7 @@ export function CarCatalog() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar por marca, modelo..."
+            placeholder={t.carCatalog.searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-card border-border text-foreground pl-9"
@@ -61,10 +63,10 @@ export function CarCatalog() {
         </div>
         <Select value={brandFilter} onValueChange={setBrandFilter}>
           <SelectTrigger className="w-full sm:w-48 bg-card border-border text-foreground">
-            <SelectValue placeholder="Todas las marcas" />
+            <SelectValue placeholder={t.carCatalog.allBrands} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas las marcas</SelectItem>
+            <SelectItem value="all">{t.carCatalog.allBrands}</SelectItem>
             {brands.map((brand) => (
               <SelectItem key={brand} value={brand}>
                 {brand}
@@ -92,10 +94,10 @@ export function CarCatalog() {
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-lg font-medium text-muted-foreground">
-            No se encontraron autos
+            {t.carCatalog.noCarsFound}
           </p>
           <p className="text-sm text-muted-foreground">
-            Intenta con otra busqueda o filtro
+            {t.carCatalog.tryAnotherSearch}
           </p>
         </div>
       )}
