@@ -7,6 +7,7 @@ import useSWR from 'swr'
 import { useState } from 'react'
 import { CarFormDialog } from '@/components/car-form-dialog'
 import { ReservationManager } from '@/components/reservation-manager'
+import { useLanguage } from '@/lib/i18n/language-context'
 
 interface CarData {
   id: string
@@ -30,9 +31,10 @@ export function AdminDashboard() {
   const [showCarForm, setShowCarForm] = useState(false)
   const [editingCar, setEditingCar] = useState<CarData | null>(null)
   const [managingCar, setManagingCar] = useState<CarData | null>(null)
+  const { t } = useLanguage()
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Seguro que quieres eliminar este auto?')) return
+    if (!confirm(t.admin.confirmDelete)) return
 
     await fetch(`/api/admin/cars/${id}`, { method: 'DELETE' })
     mutate()
@@ -61,10 +63,10 @@ export function AdminDashboard() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground font-serif">
-            Mis Autos
+            {t.admin.myCars}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Administra tus autos y reservaciones
+            {t.admin.manageCarsAndReservations}
           </p>
         </div>
         <Button
@@ -74,7 +76,7 @@ export function AdminDashboard() {
           }}
         >
           <Plus className="h-4 w-4 mr-1" />
-          Agregar
+          {t.admin.add}
         </Button>
       </div>
 
@@ -104,11 +106,11 @@ export function AdminDashboard() {
                       variant={car.is_available ? 'default' : 'secondary'}
                       className={car.is_available ? 'bg-emerald-600 text-emerald-50 hover:bg-emerald-700' : ''}
                     >
-                      {car.is_available ? 'Disponible' : 'No disponible'}
+                      {car.is_available ? t.common.available : t.common.unavailable}
                     </Badge>
                   </div>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {car.year} &middot; {car.horsepower ? `${car.horsepower} HP` : car.transmission} &middot; ${car.price_per_day.toLocaleString()}/dia
+                    {car.year} &middot; {car.horsepower ? `${car.horsepower} HP` : car.transmission} &middot; ${car.price_per_day.toLocaleString()}{t.common.perDay}
                   </p>
                 </div>
               </div>
@@ -120,7 +122,7 @@ export function AdminDashboard() {
                   onClick={() => setManagingCar(car)}
                 >
                   <CalendarDays className="h-3.5 w-3.5 mr-1" />
-                  Reservaciones
+                  {t.admin.reservations}
                 </Button>
                 <Button
                   variant="outline"
@@ -131,7 +133,7 @@ export function AdminDashboard() {
                   }}
                 >
                   <Pencil className="h-3.5 w-3.5 mr-1" />
-                  Editar
+                  {t.common.edit}
                 </Button>
                 <Button
                   variant="ghost"
@@ -143,7 +145,7 @@ export function AdminDashboard() {
                   ) : (
                     <Eye className="h-3.5 w-3.5 mr-1" />
                   )}
-                  {car.is_available ? 'Ocultar' : 'Mostrar'}
+                  {car.is_available ? t.admin.hide : t.admin.show}
                 </Button>
                 <Button
                   variant="ghost"
@@ -152,7 +154,7 @@ export function AdminDashboard() {
                   onClick={() => handleDelete(car.id)}
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-1" />
-                  Eliminar
+                  {t.common.delete}
                 </Button>
               </div>
             </div>
@@ -162,10 +164,10 @@ export function AdminDashboard() {
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16 text-center">
           <Car className="mb-3 h-10 w-10 text-muted-foreground" />
           <p className="text-lg font-medium text-muted-foreground">
-            No tienes autos publicados
+            {t.admin.noCarsPublished}
           </p>
           <p className="mb-4 text-sm text-muted-foreground">
-            Agrega tu primer auto para comenzar
+            {t.admin.addFirstCar}
           </p>
           <Button
             onClick={() => {
@@ -174,7 +176,7 @@ export function AdminDashboard() {
             }}
           >
             <Plus className="h-4 w-4 mr-1" />
-            Agregar Auto
+            {t.admin.addCar}
           </Button>
         </div>
       )}

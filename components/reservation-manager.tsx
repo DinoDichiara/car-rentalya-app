@@ -27,8 +27,9 @@ import {
   eachDayOfInterval,
   differenceInDays,
 } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { es, enUS } from 'date-fns/locale'
 import type { DateRange } from 'react-day-picker'
+import { useLanguage } from '@/lib/i18n/language-context'
 
 interface CarData {
   id: string
@@ -67,6 +68,9 @@ export function ReservationManager({
   const [showForm, setShowForm] = useState(false)
   const [month, setMonth] = useState(new Date())
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
+  const { t, locale } = useLanguage()
+
+  const dateFnsLocale = locale === 'es' ? es : enUS
 
   // Form state
   const [customerName, setCustomerName] = useState('')
@@ -97,7 +101,7 @@ export function ReservationManager({
   const handleAddReservation = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!dateRange?.from || !dateRange?.to) {
-      setError('Selecciona un rango de fechas')
+      setError(t.reservations.selectDateRange)
       return
     }
 
@@ -124,7 +128,7 @@ export function ReservationManager({
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Error al guardar')
+        throw new Error(data.error || t.reservations.saveError)
       }
 
       setShowForm(false)
@@ -135,14 +139,14 @@ export function ReservationManager({
       setDateRange(undefined)
       mutate()
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
+      setError(err instanceof Error ? err.message : t.reservations.saveError)
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Seguro que quieres eliminar esta reservacion?')) return
+    if (!confirm(t.reservations.confirmDeleteReservation)) return
     await fetch(`/api/admin/reservations/${id}`, { method: 'DELETE' })
     mutate()
   }
@@ -163,9 +167,9 @@ export function ReservationManager({
   }
 
   const statusLabels: Record<string, string> = {
-    confirmed: 'Confirmada',
-    completed: 'Completada',
-    cancelled: 'Cancelada',
+    confirmed: t.reservations.confirmed,
+    completed: t.reservations.completed,
+    cancelled: t.reservations.cancelled,
   }
 
   return (
@@ -175,7 +179,7 @@ export function ReservationManager({
         className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Volver a mis autos
+        {t.reservations.backToMyCars}
       </button>
 
       <div className="mb-6 flex items-center justify-between">
@@ -184,28 +188,28 @@ export function ReservationManager({
             {car.brand} {car.model}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Administra las reservaciones de este auto
+            {t.reservations.manageReservations}
           </p>
         </div>
         <Button onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4 mr-1" />
-          Nueva
+          {t.reservations.new}
         </Button>
       </div>
 
       {/* Calendar view */}
       <div className="mb-6 rounded-xl border border-border bg-card p-4">
         <h2 className="mb-3 text-sm font-semibold text-card-foreground">
-          Calendario de Disponibilidad
+          {t.reservations.availabilityCalendar}
         </h2>
         <div className="flex items-center gap-4 mb-3">
           <div className="flex items-center gap-1.5">
             <div className="h-3 w-3 rounded-full bg-primary/20 border border-primary/40" />
-            <span className="text-xs text-muted-foreground">Disponible</span>
+            <span className="text-xs text-muted-foreground">{t.common.available}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="h-3 w-3 rounded-full bg-destructive/60" />
-            <span className="text-xs text-muted-foreground">Rentado</span>
+            <span className="text-xs text-muted-foreground">{t.common.rented}</span>
           </div>
         </div>
         <Calendar
@@ -222,7 +226,7 @@ export function ReservationManager({
 
       {/* Reservations list */}
       <h2 className="mb-3 text-lg font-semibold text-foreground">
-        Reservaciones
+        {t.admin.reservations}
       </h2>
       {reservations && reservations.length > 0 ? (
         <div className="flex flex-col gap-3">
@@ -237,7 +241,7 @@ export function ReservationManager({
                     {res.customer_name}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {res.customer_phone || res.customer_email || 'Sin contacto'}
+                    {res.customer_phone || res.customer_email || t.common.noContact}
                   </p>
                 </div>
                 <Badge className={statusColors[res.status] || ''}>
@@ -246,9 +250,9 @@ export function ReservationManager({
               </div>
 
               <div className="mb-2 text-sm text-muted-foreground">
-                {format(parseISO(res.start_date), 'dd MMM yyyy', { locale: es })}
+                {format(parseISO(res.start_date), 'dd MMM yyyy', { locale: dateFnsLocale })}
                 {' - '}
-                {format(parseISO(res.end_date), 'dd MMM yyyy', { locale: es })}
+                {format(parseISO(res.end_date), 'dd MMM yyyy', { locale: dateFnsLocale })}
                 {res.total_price && (
                   <span className="ml-2 font-medium text-primary">
                     ${res.total_price.toLocaleString()}
@@ -271,9 +275,9 @@ export function ReservationManager({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="confirmed">Confirmada</SelectItem>
-                    <SelectItem value="completed">Completada</SelectItem>
-                    <SelectItem value="cancelled">Cancelada</SelectItem>
+                    <SelectItem value="confirmed">{t.reservations.confirmed}</SelectItem>
+                    <SelectItem value="completed">{t.reservations.completed}</SelectItem>
+                    <SelectItem value="cancelled">{t.reservations.cancelled}</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
@@ -291,7 +295,7 @@ export function ReservationManager({
       ) : (
         <div className="rounded-xl border border-dashed border-border py-10 text-center">
           <p className="text-muted-foreground">
-            No hay reservaciones registradas
+            {t.reservations.noReservations}
           </p>
         </div>
       )}
@@ -301,16 +305,16 @@ export function ReservationManager({
         <DialogContent className="max-h-[90svh] overflow-y-auto bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-card-foreground font-serif">
-              Nueva Reservacion
+              {t.reservations.newReservation}
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleAddReservation} className="flex flex-col gap-4">
             <div className="grid gap-1.5">
-              <Label className="text-card-foreground">Nombre del Cliente</Label>
+              <Label className="text-card-foreground">{t.reservations.customerName}</Label>
               <Input
                 required
-                placeholder="Nombre completo"
+                placeholder={t.reservations.customerNamePlaceholder}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="bg-background border-border text-foreground"
@@ -319,19 +323,19 @@ export function ReservationManager({
 
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-1.5">
-                <Label className="text-card-foreground">Telefono</Label>
+                <Label className="text-card-foreground">{t.reservations.phone}</Label>
                 <Input
-                  placeholder="+52..."
+                  placeholder="+1..."
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   className="bg-background border-border text-foreground"
                 />
               </div>
               <div className="grid gap-1.5">
-                <Label className="text-card-foreground">Email</Label>
+                <Label className="text-card-foreground">{t.reservations.email}</Label>
                 <Input
                   type="email"
-                  placeholder="correo@..."
+                  placeholder="email@..."
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   className="bg-background border-border text-foreground"
@@ -340,7 +344,7 @@ export function ReservationManager({
             </div>
 
             <div className="grid gap-1.5">
-              <Label className="text-card-foreground">Fechas de Renta</Label>
+              <Label className="text-card-foreground">{t.reservations.rentalDates}</Label>
               <div className="rounded-lg border border-border bg-background p-2">
                 <Calendar
                   mode="range"
@@ -352,7 +356,7 @@ export function ReservationManager({
               </div>
               {dateRange?.from && dateRange?.to && (
                 <p className="text-xs text-muted-foreground">
-                  {differenceInDays(dateRange.to, dateRange.from) + 1} dias = $
+                  {differenceInDays(dateRange.to, dateRange.from) + 1} {t.reservations.days} = $
                   {(
                     (differenceInDays(dateRange.to, dateRange.from) + 1) *
                     car.price_per_day
@@ -362,9 +366,9 @@ export function ReservationManager({
             </div>
 
             <div className="grid gap-1.5">
-              <Label className="text-card-foreground">Notas (opcional)</Label>
+              <Label className="text-card-foreground">{t.reservations.notesOptional}</Label>
               <Input
-                placeholder="Notas adicionales..."
+                placeholder={t.reservations.notesPlaceholder}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="bg-background border-border text-foreground"
@@ -374,7 +378,7 @@ export function ReservationManager({
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? 'Guardando...' : 'Registrar Reservacion'}
+              {isLoading ? t.reservations.savingText : t.reservations.registerReservation}
             </Button>
           </form>
         </DialogContent>

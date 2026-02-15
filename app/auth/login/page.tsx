@@ -8,6 +8,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Car } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n/language-context'
+import { LanguageToggle } from '@/components/language-toggle'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -15,6 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const { t } = useLanguage()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,27 +52,30 @@ export default function LoginPage() {
     <div className="flex min-h-svh w-full items-center justify-center bg-background p-6">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center gap-8">
-          <Link href="/" className="flex items-center gap-2">
-            <Car className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold tracking-tight text-foreground font-serif">RENTYA</span>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2">
+              <Car className="h-8 w-8 text-primary" />
+              <span className="text-2xl font-bold tracking-tight text-foreground font-serif">RENTYA</span>
+            </Link>
+            <LanguageToggle />
+          </div>
 
           <div className="w-full rounded-xl border border-border bg-card p-6">
             <div className="flex flex-col gap-1 mb-6">
-              <h1 className="text-xl font-semibold text-card-foreground">Iniciar Sesion</h1>
+              <h1 className="text-xl font-semibold text-card-foreground">{t.auth.signIn}</h1>
               <p className="text-sm text-muted-foreground">
-                Ingresa tu correo y contrasena
+                {t.auth.enterCredentials}
               </p>
             </div>
 
             <form onSubmit={handleLogin}>
               <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email" className="text-card-foreground">Correo</Label>
+                  <Label htmlFor="email" className="text-card-foreground">{t.auth.emailLabel}</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="correo@ejemplo.com"
+                    placeholder={t.auth.emailPlaceholder}
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -77,7 +83,7 @@ export default function LoginPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password" className="text-card-foreground">Contrasena</Label>
+                  <Label htmlFor="password" className="text-card-foreground">{t.auth.passwordLabel}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -89,16 +95,16 @@ export default function LoginPage() {
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Ingresando...' : 'Ingresar'}
+                  {isLoading ? t.auth.signingIn : t.auth.signInButton}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm text-muted-foreground">
-                {'No tienes cuenta? '}
+                {t.auth.noAccount}
                 <Link
                   href="/auth/sign-up"
                   className="text-primary underline underline-offset-4"
                 >
-                  Registrate
+                  {t.auth.signUpLink}
                 </Link>
               </div>
             </form>

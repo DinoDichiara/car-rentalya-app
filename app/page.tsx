@@ -1,9 +1,15 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Car, Shield, CalendarDays, Phone } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n/language-context'
+import { LanguageToggle } from '@/components/language-toggle'
 
 export default function LandingPage() {
+  const { t } = useLanguage()
+
   return (
     <div className="flex min-h-svh flex-col bg-background">
       {/* Header */}
@@ -15,11 +21,12 @@ export default function LandingPage() {
           </span>
         </div>
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/auth/login">Ingresar</Link>
+            <Link href="/auth/login">{t.common.login}</Link>
           </Button>
           <Button size="sm" asChild>
-            <Link href="/auth/sign-up">Registrate</Link>
+            <Link href="/auth/sign-up">{t.common.signUp}</Link>
           </Button>
         </div>
       </header>
@@ -29,7 +36,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 overflow-hidden">
           <Image
             src="/images/hero-car.jpg"
-            alt="Super auto de lujo en carretera"
+            alt={t.landing.heroAlt}
             fill
             className="object-cover opacity-30"
             priority
@@ -39,17 +46,17 @@ export default function LandingPage() {
 
         <div className="relative z-10 flex max-w-lg flex-col items-center gap-6">
           <h1 className="text-4xl font-bold leading-tight text-foreground font-serif text-balance sm:text-5xl">
-            Renta Super Autos de Lujo
+            {t.landing.heroTitle}
           </h1>
           <p className="text-base leading-relaxed text-muted-foreground text-pretty">
-            Accede a los vehiculos mas exclusivos del mundo. Lamborghini, Ferrari, Porsche, McLaren y mas al alcance de una llamada.
+            {t.landing.heroDescription}
           </p>
           <div className="flex gap-3">
             <Button size="lg" asChild>
-              <Link href="/cars">Ver Catalogo</Link>
+              <Link href="/cars">{t.landing.viewCatalog}</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link href="/auth/sign-up">Publicar Autos</Link>
+              <Link href="/auth/sign-up">{t.landing.publishCars}</Link>
             </Button>
           </div>
         </div>
@@ -63,10 +70,10 @@ export default function LandingPage() {
               <CalendarDays className="h-6 w-6 text-primary" />
             </div>
             <h3 className="font-semibold text-card-foreground">
-              Disponibilidad en Tiempo Real
+              {t.landing.featureAvailabilityTitle}
             </h3>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Consulta la disponibilidad de cada auto al instante con nuestro calendario.
+              {t.landing.featureAvailabilityDesc}
             </p>
           </div>
 
@@ -75,10 +82,10 @@ export default function LandingPage() {
               <Phone className="h-6 w-6 text-primary" />
             </div>
             <h3 className="font-semibold text-card-foreground">
-              Contacto Directo
+              {t.landing.featureContactTitle}
             </h3>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Contacta directamente al propietario del auto con un solo toque.
+              {t.landing.featureContactDesc}
             </p>
           </div>
 
@@ -87,10 +94,10 @@ export default function LandingPage() {
               <Shield className="h-6 w-6 text-primary" />
             </div>
             <h3 className="font-semibold text-card-foreground">
-              Panel de Administracion
+              {t.landing.featureAdminTitle}
             </h3>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Administra tus autos, controla reservaciones y gestiona tu flota desde un solo lugar.
+              {t.landing.featureAdminDesc}
             </p>
           </div>
         </div>
@@ -99,7 +106,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-border px-4 py-6 text-center">
         <p className="text-xs text-muted-foreground">
-          RENTYA - Super Autos de Lujo
+          {t.landing.footer}
         </p>
       </footer>
     </div>
